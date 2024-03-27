@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>untitled</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jMeterTestFile>blazedemoTest.jmx</jMeterTestFile>
+        <testFilesDirectory>${basedir}/src/test/jmeter</testFilesDirectory>
+
+        <name>testResult</name>
+        <value>csv</value>
+
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <timeZone>GMT-4</timeZone>
+
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>stab</id>
+            <properties>
+                <users>10</users>
+                <startup>10</startup>
+                <hold>60</hold>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>stupeny</id>
+            <properties>
+                <users>10</users>
+                <usersST>1</usersST>
+                <startup>10</startup>
+                <!--                Плавный выход (60с) пользователей на каждую ступень-->
+                <startupST>0</startupST>
+
+            </properties>
+        </profile>
+    </profiles>
+
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <!-- Generate JMeter configuration -->
+                    <execution>
+                        <id>configuration</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+                    <!-- Run JMeter tests -->
+                    <execution>
+                        <id>jmeter-tests</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jmeter</goal>
+                        </goals>
+                    </execution>
+
+
+                    <execution>
+                        <id>jmeter-check-results</id>
+                        <goals>
+                            <goal>results</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+
+                <configuration>
+
+
+
+                    <resultsDirectory>${basedir}/result</resultsDirectory>
+
+                    <jmeterExtensions>
+                        <artifact>kg.apc:jmeter-plugins-casutg:2.10</artifact>
+
+                    </jmeterExtensions>
+                    <jMeterProcessJVMSettings>
+                        <!-- Параметры JVM -->
+                        <xms>1024</xms> <!-- Установка начального размера памяти -->
+                        <xmx>4096</xmx> <!-- Установка максимального размера памяти -->
+                        <!-- Другие параметры JVM, если необходимо -->
+                    </jMeterProcessJVMSettings>
+                    <!-- Директория с JMeter-скриптами -->
+
+                    <testFilesDirectory>${testFilesDirectory}</testFilesDirectory>
+                    <testFilesIncluded>
+                        <!-- Список JMeter-скриптов, которые нужно выполнить -->
+                        <jMeterTestFile>${jMeterTestFile}</jMeterTestFile>
+                        <!--                 Добавьте другие скрипты по мере необходимости -->
+                    </testFilesIncluded>
+
+                    <propertiesUser>
+                        <url>blazedemo.com</url>
+
+                        <users>${users}</users>
+
+                        <startupST>${startupST}</startupST>
+                        <startup>${startup}</startup>
+
+                        <hold>${hold}</hold>
+                        <usersST>${usersST}</usersST>
+                    </propertiesUser>
+                    <!--            При запуске Gui будет открываться данный тест-->
+                    <guiTestFile>${testFilesDirectory}/${jMeterTestFile}</guiTestFile>
+                    <reportDirectory>${basedir}/result/${timestamp}-result</reportDirectory>
+                    <generateReports>true</generateReports>
+
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+</project>
